@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Expenses Demo',
       theme: ThemeData(
-        primaryColor: Colors.black,
+        primarySwatch: Colors.teal,
         accentColor: Colors.indigo,
         textTheme: ThemeData.light().textTheme.copyWith(
               headline5: TextStyle(
@@ -73,11 +73,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addNewTransaction(String txTitle, double txAmount) {
+  void _addNewTransaction(String txTitle, double txAmount, DateTime txDate) {
     final newTx = Transaction(
         title: txTitle,
         amount: txAmount,
-        date: DateTime.now(),
+        date: txDate,
         id: DateTime.now().toString());
     setState(() {
       _userTransactions.add(newTx);
@@ -92,46 +92,58 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((tx) => tx.id == id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      toolbarHeight: MediaQuery.of(context).size.height * 0.2,
+      actions: [
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () => _startAddNewTransaction(context),
+        )
+      ],
+      title: Text(
+        'Expenses',
+        style: TextStyle(
+            fontSize: 40,
+            foreground: Paint()
+              ..shader = ui.Gradient.linear(
+                const Offset(0, 20),
+                const Offset(150, 20),
+                <Color>[
+                  Colors.red,
+                  Colors.blue,
+                ],
+              )),
+      ),
+      elevation: 0,
+    );
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        toolbarHeight: 150,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _startAddNewTransaction(context),
-          )
-        ],
-        title: Text(
-          'Expenses',
-          style: TextStyle(
-              fontSize: 40,
-              foreground: Paint()
-                ..shader = ui.Gradient.linear(
-                  const Offset(0, 20),
-                  const Offset(150, 20),
-                  <Color>[
-                    Colors.red,
-                    Colors.blue,
-                  ],
-                )),
-        ),
-        elevation: 0,
-      ),
+      appBar: appBar,
       body: Column(
         // mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Chart(_recentTransactions),
-            ],
-          ),
+        children: [
           Container(
-            child: TransactionList(_userTransactions),
+              height: (MediaQuery.of(context).size.height -
+                      appBar.preferredSize.height -
+                      MediaQuery.of(context).padding.top) *
+                  0.3,
+              child: Chart(_recentTransactions)),
+          Container(
+            height: (MediaQuery.of(context).size.height -
+                    appBar.preferredSize.height -
+                    MediaQuery.of(context).padding.top) *
+                0.4,
+            child: TransactionList(_userTransactions, _deleteTransaction),
           )
         ],
       ),
