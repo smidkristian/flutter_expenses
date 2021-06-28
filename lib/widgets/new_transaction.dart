@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:expenses/widgets/adaptive_text_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -51,51 +55,55 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Container(
-        margin: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            TextField(
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  labelText: 'Title'.toUpperCase(),
-                  labelStyle: TextStyle(fontFamily: 'monospace')),
-              // onChanged: (val) => titleInput = val,
-              controller: _titleController,
-              onSubmitted: (_) => _submitData(),
-            ),
-            TextField(
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  labelText: 'Amount'.toUpperCase(),
-                  labelStyle: TextStyle(fontFamily: 'monospace')),
-              // onChanged: (val) => amountInput = val,
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              onSubmitted: (_) => _submitData(),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(_selectedDate == null
-                    ? 'No date chosen'
-                    : 'Date: ${DateFormat.yMMMd().format(_selectedDate)}'),
-                TextButton(
-                  onPressed: _presentDatePicker,
-                  child: Text('Choose date'),
-                )
-              ],
-            ),
-            TextButton(
-              child: Text(
-                'Add'.toUpperCase(),
-                style: TextStyle(fontFamily: 'monospace'),
+    return SingleChildScrollView(
+      child: Card(
+        child: Container(
+          padding: EdgeInsets.only(
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              TextField(
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    labelText: 'Title'.toUpperCase(),
+                    labelStyle: TextStyle(fontFamily: 'monospace')),
+                // onChanged: (val) => titleInput = val,
+                controller: _titleController,
+                onSubmitted: (_) => _submitData(),
               ),
-              onPressed: _submitData,
-            )
-          ],
+              TextField(
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    labelText: 'Amount'.toUpperCase(),
+                    labelStyle: TextStyle(fontFamily: 'monospace')),
+                // onChanged: (val) => amountInput = val,
+                controller: _amountController,
+                keyboardType: TextInputType.number,
+                onSubmitted: (_) => _submitData(),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(_selectedDate == null
+                      ? 'No date chosen'
+                      : 'Date: ${DateFormat.yMMMd().format(_selectedDate)}'),
+                  AdaptiveTextButton('Choose a date', _presentDatePicker)
+                ],
+              ),
+              TextButton(
+                child: Text(
+                  'Add'.toUpperCase(),
+                  style: TextStyle(fontFamily: 'monospace'),
+                ),
+                onPressed: _submitData,
+              )
+            ],
+          ),
         ),
       ),
     );
